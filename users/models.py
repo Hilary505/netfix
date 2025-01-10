@@ -7,10 +7,16 @@ class User(AbstractUser):
     is_company = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=False)
     email = models.CharField(max_length=100, unique=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
 
 class Customer(models.Model):
-    pass
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    birth = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Company(models.Model):
