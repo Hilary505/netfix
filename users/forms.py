@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, authenticate
 from django.db import transaction
 from django.core.exceptions import ValidationError
+from django.contrib.auth import authenticate
 
 from .models import User, Company, Customer
 
@@ -77,16 +78,25 @@ class CompanySignUpForm(UserCreationForm):
             # Create a company profile and associate it with the user
             Company.objects.create(user=user, field=self.cleaned_data['field'])
         return user
+        
 
 class UserLoginForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(UserLoginForm, self).__init__(*args, **kwargs)
-
-    email = forms.EmailField(widget=forms.TextInput(
-        attrs={'placeholder': 'Enter Email'}))
+    email = forms.EmailField(
+        widget=forms.TextInput(attrs={'placeholder': 'Enter Email', 'autocomplete': 'on'})
+    )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder': 'Enter Password'}))
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter Password'})
+    )
 
-    def __init__(self, *args, **kwargs):
-        super(UserLoginForm, self).__init__(*args, **kwargs)
-        self.fields['email'].widget.attrs['autocomplete'] = 'off'
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+
+        # Check if both email and password were provided
+        if email and password:
+            # Authenticate the user
+            user = authenticate(username=email, password=password)
+            if user is None:
+                raise forms.ValidationError("Invalid email or password.")
+        
+        return self.cleaned_data
