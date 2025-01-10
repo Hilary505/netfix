@@ -9,7 +9,10 @@ from .forms import CreateNewService, RequestServiceForm
 
 def service_list(request):
     services = Service.objects.all().order_by("-date")
-    return render(request, 'services/list.html', {'services': services})
+    paginator = Paginator(services, 4)  # Show 5 services per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'services/list.html', {'page_obj': page_obj})
 
 
 def index(request, id):
