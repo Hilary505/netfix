@@ -1,11 +1,30 @@
 {% extends 'main/base.html' %}
+
 {% block title %}
     Request Service
 {% endblock %}
 
 {% block content %}
     <p class="title">Service Request Details</p>
+    <h2>{{ service.name }}</h2>
+    <p><strong>Price per hour:</strong> ${{ service.price_hour }}</p>
+
     <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="id_address">Address:</label>
+            {{ form.address }}
+            {% if form.address.errors %}
+            <span class="error">{{ form.address.errors }}</span>
+            {% endif %}
+        </div>
+        <div>
+            <label for="id_service_hours">Service Hours:</label>
+            {{ form.service_hours }}
+            {% if form.service_hours.errors %}
+            <span class="error">{{ form.service_hours.errors }}</span>
+            {% endif %}
+        </div>
         <button type="submit">Request</button>
     </form>
 {% endblock %}
