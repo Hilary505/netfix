@@ -1,5 +1,5 @@
 body {
-  background: #292929;
+  background: #72808D;
   font-family: 'Lexend Exa', sans-serif;
   padding: 0;
   margin: 0;
@@ -20,7 +20,7 @@ button:not(:last-child) {
 }
 button {
   border: 2px solid transparent;
-  border-radius: 5px;
+  border-radius: 50px;
   padding: 10px;
   transition: background 0.7s;
   color: #ec2f00;
@@ -38,7 +38,7 @@ button:hover {
 }
 
 .content {
-  background-color: #646464;
+  background-color: #834A19;
   margin: 0 auto;
   width: 65%;
   padding: 20px 60px;
@@ -308,6 +308,7 @@ form input {
   border-bottom: 3px solid black;
   background-color: inherit;
   margin-top: 30px;
+
 }
 
 form input:hover,
