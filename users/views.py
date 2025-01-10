@@ -40,5 +40,29 @@ class CompanySignUpView(CreateView):
         return redirect('/')
 
 
+
 def LoginUserView(request):
-    pass
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            # Authenticate the user
+            email = form.cleaned_data.get('email')  # Corrected here
+            password = form.cleaned_data.get('password')
+
+            user = authenticate(request, username=email, password=password)
+
+            if user is not None:
+                login(request, user)  # Log the user in
+                # Redirect based on user type
+                if user.is_customer:
+                    return redirect('customer_profile', username=user.username)  # Redirect to customer profile
+                elif user.is_company:
+                    return redirect('company_profile', username=user.username)  # Redirect to company profile
+                else:
+                    return redirect('home')  # Fallback to homepage
+            else:
+                messages.error(request, 'Invalid email or password.')
+    else:
+        form = UserLoginForm()
+
+    return render(request, 'users/login.html', {'form': form})
