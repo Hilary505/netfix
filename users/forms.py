@@ -18,12 +18,65 @@ def validate_email(value):
 
 
 class CustomerSignUpForm(UserCreationForm):
-    pass
+    email = forms.EmailField(
+        required=True,
+        validators=[validate_email],  # Ensure email is unique
+        widget=forms.EmailInput(attrs={'placeholder': 'Enter Email'})
+    )
+    username = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Enter Username'})
+    )
+    date_of_birth = forms.DateField(
+        widget=DateInput(attrs={'placeholder': 'Enter Date of Birth'})
+    )
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+    @transaction.atomic
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_customer = True  # Mark the user as a customer
+        if commit:
+            user.save()
+            # Create a customer profile and associate it with the user
+            Customer.objects.create(user=user, birth=self.cleaned_data['date_of_birth'])
+        return user
+
+
+
 
 
 class CompanySignUpForm(UserCreationForm):
-    pass
+    email = forms.EmailField(
+        required=True,
+        validators=[validate_email],  # Ensure email is unique
+        widget=forms.EmailInput(attrs={'placeholder': 'Enter Email'})
+    )
+    username = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Enter Username'})
+    )
+    field = forms.ChoiceField(
+        choices=Company._meta.get_field('field').choices,  # Use choices from the Company model
+        widget=forms.Select(attrs={'placeholder': 'Select Field of Work'})
+    )
 
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ['username', 'email', 'password1', 'password2', 'field']
+
+    @transaction.atomic
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_company = True  # Mark the user as a company
+        if commit:
+            user.save()
+            # Create a company profile and associate it with the user
+            Company.objects.create(user=user, field=self.cleaned_data['field'])
+        return user
 
 class UserLoginForm(forms.Form):
     def __init__(self, *args, **kwargs):
