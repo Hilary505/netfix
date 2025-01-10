@@ -8,8 +8,8 @@ def home(request):
     return render(request, 'users/home.html', {'user': request.user})
 
 
-def customer_profile(request):
-    pass
+def customer_profile(request, name):
+  return render(request, 'users/profile.html')
 
 
 def company_profile(request, name):
