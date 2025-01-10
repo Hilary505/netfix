@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+
 
 from users.models import Company, Customer, User
 
-from .models import Service
+from django.core.paginator import Paginator
+from .models import Service,ServiceRequest
 from .forms import CreateNewService, RequestServiceForm
 
 
